@@ -1,0 +1,201 @@
+#ppt-panel-root {
+  position: fixed;
+  right: 14px;
+  bottom: 92px;
+  z-index: 9999;
+  width: 360px;
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+}
+
+#ppt-panel-root .ppt-panel-card {
+  border: 1px solid var(--color-gray-200, #e5e7eb);
+  border-radius: 14px;
+  background: var(--color-gray-50, #f9fafb);
+  color: var(--color-gray-900, #111827);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
+  padding: 12px;
+  font-size: 12px;
+}
+
+#ppt-panel-root .ppt-panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+#ppt-panel-root .ppt-panel-head-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#ppt-panel-root .ppt-panel-head strong {
+  font-size: 14px;
+}
+
+#ppt-panel-root .ppt-panel-head-actions {
+  display: flex;
+  gap: 6px;
+}
+
+#ppt-panel-root .ppt-panel-mini-btn {
+  border: 1px solid var(--color-gray-300, #d1d5db);
+  border-radius: 8px;
+  background: var(--color-gray-50, #f9fafb);
+  color: var(--color-gray-700, #374151);
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+#ppt-panel-root .ppt-panel-sub {
+  color: var(--color-gray-500, #6b7280);
+}
+
+#ppt-panel-root .ppt-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+#ppt-panel-root .ppt-panel-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-gray-700, #374151);
+  font-size: 11px;
+}
+
+#ppt-panel-root .ppt-panel-input {
+  display: flex;
+}
+
+#ppt-panel-root input,
+#ppt-panel-root select {
+  width: 100%;
+  border: 1px solid var(--color-gray-300, #d1d5db);
+  border-radius: 8px;
+  background: var(--color-gray-25, #ffffff);
+  color: var(--color-gray-900, #111827);
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+#ppt-panel-root input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+}
+
+#ppt-panel-root .ppt-panel-actions {
+  margin-top: 10px;
+}
+
+#ppt-panel-root button {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-gray-900, #111827);
+  color: #fff;
+  padding: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#ppt-panel-root .ppt-panel-help {
+  margin-top: 10px;
+  border-top: 1px dashed var(--color-gray-300, #d1d5db);
+  padding-top: 8px;
+}
+
+#ppt-panel-root .ppt-panel-help summary {
+  cursor: pointer;
+  color: var(--color-gray-600, #4b5563);
+}
+
+#ppt-panel-root .ppt-panel-help ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--color-gray-700, #374151);
+}
+
+#ppt-panel-launcher {
+  position: fixed;
+  right: 16px;
+  bottom: 90px;
+  z-index: 10000;
+  border: 1px solid var(--color-gray-300, #d1d5db);
+  border-radius: 999px;
+  background: var(--color-gray-50, #f9fafb);
+  color: var(--color-gray-800, #1f2937);
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+}
+
+html.dark #ppt-panel-root .ppt-panel-card {
+  border-color: var(--color-gray-700, #374151);
+  background: var(--color-gray-800, #1f2937);
+  color: var(--color-gray-100, #f3f4f6);
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.45);
+}
+
+html.dark #ppt-panel-root .ppt-panel-sub {
+  color: var(--color-gray-400, #9ca3af);
+}
+
+html.dark #ppt-panel-root .ppt-panel-label {
+  color: var(--color-gray-300, #d1d5db);
+}
+
+html.dark #ppt-panel-root input,
+html.dark #ppt-panel-root select {
+  border-color: var(--color-gray-600, #4b5563);
+  background: var(--color-gray-900, #111827);
+  color: var(--color-gray-100, #f3f4f6);
+}
+
+html.dark #ppt-panel-root .ppt-panel-mini-btn {
+  border-color: var(--color-gray-600, #4b5563);
+  background: var(--color-gray-900, #111827);
+  color: var(--color-gray-200, #e5e7eb);
+}
+
+html.dark #ppt-panel-root button {
+  background: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-900, #111827);
+}
+
+html.dark #ppt-panel-root .ppt-panel-help {
+  border-top-color: var(--color-gray-600, #4b5563);
+}
+
+html.dark #ppt-panel-root .ppt-panel-help summary {
+  color: var(--color-gray-300, #d1d5db);
+}
+
+html.dark #ppt-panel-root .ppt-panel-help ul {
+  color: var(--color-gray-200, #e5e7eb);
+}
+
+html.dark #ppt-panel-launcher {
+  border-color: var(--color-gray-600, #4b5563);
+  background: var(--color-gray-800, #1f2937);
+  color: var(--color-gray-100, #f3f4f6);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.4);
+}
+
+@media (max-width: 980px) {
+  #ppt-panel-root {
+    width: min(96vw, 420px);
+    right: 8px;
+    bottom: 78px;
+  }
+  #ppt-panel-root .ppt-panel-grid {
+    grid-template-columns: 1fr;
+  }
+}

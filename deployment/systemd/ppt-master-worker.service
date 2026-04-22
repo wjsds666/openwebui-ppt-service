@@ -1,0 +1,13 @@
+[Unit]
+Description=PPT Master Worker Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ppt-master/integrations/openwebui-ppt-service
+EnvironmentFile=/opt/ppt-master/integrations/openwebui-ppt-service/.env
+ExecStart=/usr/bin/env bash -lc 'export PYTHONPATH=/opt/ppt-master/integrations/openwebui-ppt-service && python -m app_worker'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

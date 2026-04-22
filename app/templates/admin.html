@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PPT Master 服务管理</title>
+  <style>
+    :root { --bg:#f4f7fb; --panel:#fff; --text:#0f172a; --muted:#475569; --border:#dbe3ef; --primary:#0f62fe; --accent:#0ea5a4; --danger:#dc2626; }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      background:radial-gradient(circle at top right, rgba(15,98,254,.10), transparent 28%), linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color:var(--text);
+    }
+    .wrap { max-width:1100px; margin:0 auto; padding:32px 20px 56px; }
+    .hero { display:grid; grid-template-columns:1.4fr .8fr; gap:20px; margin-bottom:20px; }
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:20px; box-shadow:0 24px 60px rgba(15,23,42,.06); padding:24px; }
+    h1 { margin:0 0 10px; font-size:30px; line-height:1.15; }
+    h2 { margin:0 0 16px; font-size:20px; }
+    .sub { margin:0; color:var(--muted); line-height:1.65; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(15,98,254,.08); color:var(--primary); font-size:13px; font-weight:600; margin-bottom:14px; }
+    .grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; }
+    label { display:block; margin-bottom:8px; font-size:14px; font-weight:600; }
+    input, select { width:100%; border:1px solid var(--border); border-radius:12px; padding:12px 14px; font-size:14px; background:#fff; color:var(--text); }
+    input[type="checkbox"] { width:auto; margin-right:8px; transform:scale(1.1); }
+    .field { margin-bottom:16px; }
+    .toggle {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+      color:#0b2447;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#f8fbff;
+    }
+    .subpanel {
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fbfdff;
+      padding:14px;
+    }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:8px; }
+    button { border:0; border-radius:12px; padding:12px 16px; font-size:14px; font-weight:700; cursor:pointer; background:var(--primary); color:#fff; }
+    button.secondary { background:#0f172a; }
+    button.ghost { background:#e6eefc; color:var(--primary); }
+    .status { min-height:22px; margin-top:12px; font-size:14px; color:var(--muted); white-space:pre-wrap; }
+    .status.error { color:var(--danger); }
+    .list { border:1px solid var(--border); border-radius:14px; background:#fbfdff; padding:8px; min-height:260px; overflow:auto; }
+    .list button { width:100%; text-align:left; background:#fff; color:var(--text); border:1px solid transparent; font-weight:500; margin-bottom:8px; }
+    .list button:hover { border-color:rgba(15,98,254,.35); background:rgba(15,98,254,.04); }
+    .small { font-size:13px; color:var(--muted); line-height:1.6; }
+    code { padding:2px 6px; border-radius:8px; background:#eef4ff; color:#174ea6; }
+    @media (max-width:900px) { .hero, .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <section class="card">
+        <div class="badge">PPT 服务管理页</div>
+        <h1>模型地址、Key、默认模型都可以在这里直接配</h1>
+        <p class="sub">这个页面会把运行时配置保存到服务自己的 <code>storage/runtime_config.json</code>。保存后，新任务会直接使用这里选中的模型配置。</p>
+      </section>
+      <section class="card">
+        <div class="small">
+          建议流程：
+          <br>1. 填“模型接口地址”和“模型密钥”
+          <br>2. 点击“拉取模型”
+          <br>3. 点选一个模型填回表单
+          <br>4. 点击“保存配置”
+          <br>5. 再去 OpenWebUI 里使用 Pipe
+        </div>
+      </section>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <h2>运行配置</h2>
+        <div class="field"><label for="service_api_key">服务访问口令（Service API Key）</label><input id="service_api_key" placeholder="例如：change-me"></div>
+        <div class="field"><label for="public_base_url">服务对外地址（Public Base URL）</label><input id="public_base_url" placeholder="例如：http://127.0.0.1:8099"></div>
+        <div class="field"><label for="llm_base_url">模型接口地址（LLM Base URL）</label><input id="llm_base_url" placeholder="例如：https://api.openai.com/v1"></div>
+        <div class="field"><label for="llm_api_key">模型密钥（LLM API Key）</label><input id="llm_api_key" placeholder="例如：sk-..." type="password"></div>
+        <div class="field"><label for="llm_model">默认模型（LLM Model）</label><input id="llm_model" placeholder="例如：gpt-4o-mini"></div>
+        <div class="field">
+          <div class="toggle">
+            <input id="ai_image_enabled" type="checkbox">
+            <label for="ai_image_enabled" style="margin:0">启用 AI 生图</label>
+          </div>
+        </div>
+        <div id="imageSettings" class="subpanel">
+          <div class="small" style="margin-bottom:10px;">
+            说明：关闭开关时不会使用任何生图配置；开启后，仅当任务设置为 AI 生图策略时才会使用这些参数。
+          </div>
+          <div class="field"><label for="image_backend">生图后端（Image Backend）</label>
+            <select id="image_backend">
+              <option value="openai">openai</option>
+              <option value="gemini">gemini</option>
+              <option value="qwen">qwen</option>
+              <option value="zhipu">zhipu</option>
+              <option value="volcengine">volcengine</option>
+            </select>
+          </div>
+          <div class="field"><label for="image_api_key">生图 API Key</label><input id="image_api_key" placeholder="未开启生图可留空" type="password"></div>
+          <div class="field"><label for="image_model">生图模型（可选）</label><input id="image_model" placeholder="例如：gpt-image-1"></div>
+          <div class="field"><label for="image_base_url">生图接口地址（可选）</label><input id="image_base_url" placeholder="例如：https://api.openai.com/v1"></div>
+          <div class="actions" style="margin-top:4px;">
+            <button class="secondary" id="fetchImageModelsBtn" type="button">拉取生图模型</button>
+          </div>
+          <div id="imageModelsStatus" class="status"></div>
+          <div id="imageModelsList" class="list" style="min-height:120px;"></div>
+        </div>
+        <div class="field"><label for="default_canvas_format">默认画布比例（Default Canvas Format）</label>
+          <select id="default_canvas_format"><option value="ppt169">ppt169</option><option value="ppt43">ppt43</option><option value="xhs">xhs</option><option value="story">story</option></select>
+        </div>
+        <div class="field"><label for="default_page_count">默认页数（Default Page Count）</label><input id="default_page_count" type="number" min="3" max="30"></div>
+        <div class="field"><label for="default_style_objective">默认风格（Default Style Objective）</label>
+          <select id="default_style_objective"><option value="general_versatile">通用风（general_versatile）</option><option value="general_consulting">通用咨询风（general_consulting）</option><option value="top_consulting">顶级咨询风（top_consulting）</option></select>
+        </div>
+        <div class="actions"><button id="saveBtn">保存配置</button><button class="ghost" id="reloadBtn" type="button">重新读取</button></div>
+        <div id="saveStatus" class="status"></div>
+      </section>
+      <section class="card">
+        <h2>拉取模型列表</h2>
+        <p class="small">点击后会请求你填的模型接口地址的 <code>/models</code>，用于自动列出可选模型。</p>
+        <div class="actions"><button class="secondary" id="fetchModelsBtn" type="button">拉取模型</button></div>
+        <div id="modelsStatus" class="status"></div>
+        <div id="modelsList" class="list"></div>
+      </section>
+    </div>
+  </div>
+  <script>
+    function getApiKey() {
+      return document.getElementById("service_api_key").value.trim();
+    }
+    async function request(path, options = {}) {
+      const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+      const apiKey = getApiKey();
+      if (apiKey) headers["X-API-Key"] = apiKey;
+      const response = await fetch(path, { headers, ...options });
+      if (!response.ok) { const text = await response.text(); throw new Error(text || `HTTP ${response.status}`); }
+      const contentType = response.headers.get("content-type") || "";
+      return contentType.includes("application/json") ? response.json() : response.text();
+    }
+    function setStatus(id, message, isError = false) { const node = document.getElementById(id); node.textContent = message || ""; node.className = isError ? "status error" : "status"; }
+    function toggleImageSettings() {
+      const enabled = document.getElementById("ai_image_enabled").checked;
+      const panel = document.getElementById("imageSettings");
+      panel.style.opacity = enabled ? "1" : "0.55";
+      ["image_backend", "image_api_key", "image_model", "image_base_url"].forEach((id) => {
+        document.getElementById(id).disabled = !enabled;
+      });
+    }
+    function getFormData() {
+      return {
+        service_api_key: document.getElementById("service_api_key").value.trim(),
+        public_base_url: document.getElementById("public_base_url").value.trim(),
+        llm_base_url: document.getElementById("llm_base_url").value.trim(),
+        llm_api_key: document.getElementById("llm_api_key").value.trim(),
+        llm_model: document.getElementById("llm_model").value.trim(),
+        ai_image_enabled: document.getElementById("ai_image_enabled").checked,
+        image_backend: document.getElementById("image_backend").value,
+        image_api_key: document.getElementById("image_api_key").value.trim(),
+        image_model: document.getElementById("image_model").value.trim(),
+        image_base_url: document.getElementById("image_base_url").value.trim(),
+        default_canvas_format: document.getElementById("default_canvas_format").value,
+        default_page_count: Number(document.getElementById("default_page_count").value || 8),
+        default_style_objective: document.getElementById("default_style_objective").value
+      };
+    }
+    function fillForm(data) {
+      document.getElementById("service_api_key").value = data.service_api_key || "";
+      document.getElementById("public_base_url").value = data.public_base_url || "";
+      document.getElementById("llm_base_url").value = data.llm_base_url || "";
+      document.getElementById("llm_api_key").value = data.llm_api_key || "";
+      document.getElementById("llm_model").value = data.llm_model || "";
+      document.getElementById("ai_image_enabled").checked = !!data.ai_image_enabled;
+      document.getElementById("image_backend").value = data.image_backend || "openai";
+      document.getElementById("image_api_key").value = data.image_api_key || "";
+      document.getElementById("image_model").value = data.image_model || "";
+      document.getElementById("image_base_url").value = data.image_base_url || "";
+      document.getElementById("default_canvas_format").value = data.default_canvas_format || "ppt169";
+      document.getElementById("default_page_count").value = data.default_page_count || 8;
+      document.getElementById("default_style_objective").value = data.default_style_objective || "general_consulting";
+      toggleImageSettings();
+    }
+    async function loadConfig() { try { const data = await request("/api/admin/config"); fillForm(data); setStatus("saveStatus", "已加载当前配置。"); } catch (error) { setStatus("saveStatus", `读取配置失败：${error.message}`, true); } }
+    async function saveConfig() { setStatus("saveStatus", "正在保存..."); try { await request("/api/admin/config", { method:"POST", body: JSON.stringify(getFormData()) }); setStatus("saveStatus", "配置已保存，新任务会使用新配置。"); } catch (error) { setStatus("saveStatus", `保存失败：${error.message}`, true); } }
+    async function fetchModels() { setStatus("modelsStatus", "正在拉取模型列表..."); document.getElementById("modelsList").innerHTML = ""; try { const data = await request("/api/admin/llm/models", { method:"POST", body: JSON.stringify({ llm_base_url: document.getElementById("llm_base_url").value.trim(), llm_api_key: document.getElementById("llm_api_key").value.trim() }) }); const list = document.getElementById("modelsList"); if (!data.models || !data.models.length) { setStatus("modelsStatus", "模型接口可访问，但没有返回可用模型。", true); return; } data.models.forEach((model) => { const button = document.createElement("button"); button.type = "button"; button.textContent = model.id + (model.owned_by ? `  (${model.owned_by})` : ""); button.addEventListener("click", () => { document.getElementById("llm_model").value = model.id; setStatus("modelsStatus", `已选中模型：${model.id}`); }); list.appendChild(button); }); setStatus("modelsStatus", `已拉取 ${data.models.length} 个模型，点击任意一项可回填。`); } catch (error) { setStatus("modelsStatus", `拉取失败：${error.message}`, true); } }
+    async function fetchImageModels() {
+      setStatus("imageModelsStatus", "正在拉取生图模型列表...");
+      document.getElementById("imageModelsList").innerHTML = "";
+      try {
+        const data = await request("/api/admin/image/models", {
+          method:"POST",
+          body: JSON.stringify({
+            image_base_url: document.getElementById("image_base_url").value.trim(),
+            image_api_key: document.getElementById("image_api_key").value.trim()
+          })
+        });
+        const list = document.getElementById("imageModelsList");
+        if (!data.models || !data.models.length) {
+          setStatus("imageModelsStatus", "生图接口可访问，但没有返回可用模型。", true);
+          return;
+        }
+        data.models.forEach((model) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = model.id + (model.owned_by ? `  (${model.owned_by})` : "");
+          button.addEventListener("click", () => {
+            document.getElementById("image_model").value = model.id;
+            setStatus("imageModelsStatus", `已选中生图模型：${model.id}`);
+          });
+          list.appendChild(button);
+        });
+        setStatus("imageModelsStatus", `已拉取 ${data.models.length} 个生图模型，点击任意一项可回填。`);
+      } catch (error) {
+        setStatus("imageModelsStatus", `拉取失败：${error.message}`, true);
+      }
+    }
+    document.getElementById("saveBtn").addEventListener("click", saveConfig);
+    document.getElementById("reloadBtn").addEventListener("click", loadConfig);
+    document.getElementById("fetchModelsBtn").addEventListener("click", fetchModels);
+    document.getElementById("fetchImageModelsBtn").addEventListener("click", fetchImageModels);
+    document.getElementById("ai_image_enabled").addEventListener("change", toggleImageSettings);
+    loadConfig();
+  </script>
+</body>
+</html>

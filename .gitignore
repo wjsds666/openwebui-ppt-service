@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+storage/jobs/
+storage/exports/
+storage/logs/
+storage/runtime_config.json
+
+dist/
+build/

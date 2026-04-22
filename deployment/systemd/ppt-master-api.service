@@ -1,0 +1,13 @@
+[Unit]
+Description=PPT Master API Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ppt-master/integrations/openwebui-ppt-service
+EnvironmentFile=/opt/ppt-master/integrations/openwebui-ppt-service/.env
+ExecStart=/usr/bin/env bash -lc 'export PYTHONPATH=/opt/ppt-master/integrations/openwebui-ppt-service && uvicorn app.api.main:app --host 0.0.0.0 --port ${APP_PORT:-8099}'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
