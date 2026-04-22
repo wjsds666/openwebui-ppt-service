@@ -39,15 +39,20 @@
 
 ## 架构
 
-```text
-OpenWebUI
-  -> Pipe
-    -> PPT Service API
-      -> Worker
-        -> ppt-master scripts
-          -> PPTX
-```
+```mermaid
+flowchart LR
+A[OpenWebUI 聊天框] --> B[Pipe / Function]
+B --> C[OpenWebUI PPT Service]
+C --> D[ppt-master 工作流]
+D --> E[抓取 URL / 读取文件]
+D --> F[生成设计规划]
+D --> G[生成 SVG 页面]
+D --> H[生成讲稿]
+D --> I[Post-processing]
+I --> J[PPTX 文件]
+J --> K[签名下载链接返回 OpenWebUI]
 
+```
 ## 运行模式
 
 - 本地模式：你自己提前克隆 `ppt-master`，本服务通过 `PPT_MASTER_REPO_ROOT` 调用它
